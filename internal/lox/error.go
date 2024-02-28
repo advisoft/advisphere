@@ -1,4 +1,4 @@
-package frontend
+package lox
 
 type Error struct {
 	Line    int
