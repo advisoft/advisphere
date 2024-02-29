@@ -3,6 +3,7 @@ package main
 import (
 	"advisphere/internal/lox"
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/kr/pretty"
@@ -14,7 +15,7 @@ func main() {
 		os.Exit(64)
 	}
 
-	src := "2 */ 2;"
+	src := "2 * 2 + 6 / 2;"
 	lexer := lox.CreateLexer(src)
 	tokens := lexer.ScanTokens()
 
@@ -31,7 +32,10 @@ func main() {
 	// fmt.Println(printer.Print(expr))
 
 	parser := lox.CreateParser(tokens)
-	expr := parser.Parse()
+	expr, err := parser.Parse()
+	if err != nil {
+		log.Fatalln(err)
+	}
 	fmt.Println(src)
 	fmt.Println(printer.Print(expr))
 	pretty.Println(expr)
