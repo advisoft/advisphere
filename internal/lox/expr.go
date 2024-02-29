@@ -3,7 +3,7 @@ package lox
 import "fmt"
 
 type Expr interface {
-	Accept(ExprVisitor) string
+	Accept(ExprVisitor) interface{}
 }
 
 type BinaryExpr struct {
@@ -12,7 +12,7 @@ type BinaryExpr struct {
 	Right    Expr
 }
 
-func (expr BinaryExpr) Accept(visitor ExprVisitor) string {
+func (expr BinaryExpr) Accept(visitor ExprVisitor) interface{} {
 	return visitor.visitBinaryExpr(expr)
 }
 
@@ -20,7 +20,7 @@ type GroupingExpr struct {
 	Expression Expr
 }
 
-func (expr GroupingExpr) Accept(visitor ExprVisitor) string {
+func (expr GroupingExpr) Accept(visitor ExprVisitor) interface{} {
 	return visitor.visitGroupingExpr(expr)
 }
 
@@ -28,7 +28,7 @@ type LiteralExpr struct {
 	Value interface{}
 }
 
-func (expr LiteralExpr) Accept(visitor ExprVisitor) string {
+func (expr LiteralExpr) Accept(visitor ExprVisitor) interface{} {
 	return visitor.visitLiteralExpr(expr)
 }
 
@@ -37,7 +37,7 @@ type UnaryExpr struct {
 	Right    Expr
 }
 
-func (expr UnaryExpr) Accept(visitor ExprVisitor) string {
+func (expr UnaryExpr) Accept(visitor ExprVisitor) interface{} {
 	return visitor.visitUnaryExpr(expr)
 }
 
@@ -48,22 +48,23 @@ type ExprVisitor interface {
 	visitUnaryExpr(expr UnaryExpr) string
 }
 
+type AstPrinter struct {
+	
+}
+
 func (printer AstPrinter) parenthesize(name string, exprs ...Expr) string {
 	str := "("
 	str += name
 	for _, v := range exprs {
 		str += " "
-		str += v.Accept(printer)
+		str += v.Accept(printer).(string)
 	}
 	str += ")"
 	return str
 }
 
-type AstPrinter struct {
-}
-
 func (printer AstPrinter) Print(expr Expr) string {
-	return expr.Accept(printer)
+	return expr.Accept(printer).(string)
 }
 
 func (printer AstPrinter) visitBinaryExpr(expr BinaryExpr) string {

@@ -1,7 +1,6 @@
 package lox
 
 import (
-	"fmt"
 	"strconv"
 )
 
@@ -12,8 +11,6 @@ type Lexer struct {
 	start   int
 	current int
 	line    int
-
-	hadError bool
 
 	keywords map[string]TokenType
 }
@@ -39,15 +36,6 @@ func CreateLexer(source string) *Lexer {
 			"while":  WHILE,
 		},
 	}
-}
-
-func (lx *Lexer) error(line int, message string) {
-	lx.report(line, "", message)
-}
-
-func (lx *Lexer) report(line int, where string, message string) {
-	fmt.Printf("[line %d] Error %s: %s", line, where, message)
-	lx.hadError = true
 }
 
 func (lx *Lexer) ScanTokens() []Token {
@@ -137,7 +125,7 @@ func (lx *Lexer) scanToken() {
 		} else if isAlpha(c) {
 			lx.identifier()
 		} else {
-			lx.error(lx.line, "Unexpected character.")
+			lexError(lx.line, "Unexpected character.")
 		}
 
 	}
@@ -187,7 +175,7 @@ func (lx *Lexer) string() {
 	}
 
 	if lx.isAtEnd() {
-		lx.error(lx.line, "Unterminated string.")
+		lexError(lx.line, "Unterminated string.")
 		return
 	}
 
